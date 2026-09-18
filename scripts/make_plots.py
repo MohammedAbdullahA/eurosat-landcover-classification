@@ -1,14 +1,4 @@
-"""
-Generate the two required proposal figures from the real, downloaded data,
-styled in the project's dark theme (deep green background, mint accent,
-lavender secondary accent) so they drop directly into the themed PDF:
 
-  1. figures/sample_grid.png       - one representative image per class
-  2. figures/class_distribution.png - bar chart of images per class
-
-Run after scripts/inspect_data.py:
-    python scripts/make_plots.py
-"""
 import os
 import csv
 import random

@@ -1,11 +1,4 @@
-"""
-Inspect the downloaded EuroSAT dataset: verify class folders, count real
-images per class, check image dimensions, and produce a presentation-ready
-table (console + themed PNG) used by the proposal.
 
-Run after scripts/download_data.py:
-    python scripts/inspect_data.py
-"""
 import os
 import csv
 from collections import Counter

@@ -1,12 +1,4 @@
-"""
-Full inspection pass over every EuroSAT image: verifies dimensions/mode,
-checks for corrupted files, and computes per-class mean RGB channel
-intensity (used for the proposal's "sample inspection" writeup and for
-the counts+intensity figure).
 
-Run after scripts/download_data.py:
-    python scripts/sample_inspection.py
-"""
 import os
 import csv
 import numpy as np

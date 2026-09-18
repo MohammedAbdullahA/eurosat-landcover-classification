@@ -1,29 +1,4 @@
-"""
-Download and extract the EuroSAT (RGB) dataset.
 
-EuroSAT: Land Use and Land Cover Classification with Sentinel-2
-Helber et al., 2019 (IEEE JSTARS) / IGARSS 2018
-Official repo: https://github.com/phelber/eurosat
-License: MIT (repository/labels) + Copernicus Sentinel Data Terms
-         (Sentinel-2 imagery is free, full and open under the EU's
-         Copernicus data policy).
-
-This script expects the official archive (~90-95 MB) to already be present
-at data/EuroSAT.zip. If it is not there, it tries to download it from the
-Zenodo long-term archive; if that is blocked on your network, download it
-yourself first with one of:
-
-    curl -L -o data/EuroSAT.zip "https://zenodo.org/records/7711810/files/EuroSAT_RGB.zip?download=1"
-    curl -L -o data/EuroSAT.zip "https://madm.dfki.de/files/sentinel/EuroSAT.zip"
-
-or via torchvision, which fetches the same imagery automatically:
-
-    from torchvision.datasets import EuroSAT
-    EuroSAT(root="data", download=True)
-
-After extraction you will have:
-    data/raw/EuroSAT_RGB/<ClassName>/<image>.jpg   (10 class subfolders, 27,000 images)
-"""
 import os
 import sys
 import urllib.request

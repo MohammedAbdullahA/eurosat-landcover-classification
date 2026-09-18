@@ -1,21 +1,4 @@
-"""
-Create a fixed, stratified train/validation/test split BEFORE any model
-training, as required by the proposal, and produce a presentation-ready
-summary table (console + themed PNG) verifying the stratification held.
 
-EuroSAT ships as a single pool of 27,000 labeled images with no official
-train/val/test split, so we define our own:
-
-    70% train / 15% validation / 15% test, stratified by class,
-    fixed random seed (42) for reproducibility.
-
-Writes data/splits/{train,val,test}.csv, each with columns:
-    filepath,label
-and data/split_summary.csv with the per-class, per-split breakdown.
-
-Run after scripts/download_data.py:
-    python scripts/split_dataset.py
-"""
 import os
 import csv
 import random
