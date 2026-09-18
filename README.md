@@ -1,11 +1,12 @@
 # Land Use and Land Cover Classification from Satellite Imagery (EuroSAT)
 
-Repository: https://github.com/MohammedAbdullahA/eurosat-landcover-classification
+Repository: https://github.com/arbody/eurosat-landcover-classification
 
-Deep learning course project. This repository holds the code supporting the
-project proposal: dataset acquisition, inspection, the required figures, and
-the fixed train/validation/test split that model-training work will build on
-for the rest of the semester.
+Deep learning course project — Milestone 1 (Project Proposal and Experimental
+Plan). This repository holds the code supporting the proposal: dataset
+acquisition, full-dataset inspection, the required figures, and the fixed
+train/validation/test split that model-training work will build on for the
+rest of the semester.
 
 ## Problem
 
@@ -17,8 +18,10 @@ agricultural land, spotting deforestation, and rapid land-cover mapping
 after natural disasters.
 
 - **Input:** a 64x64 RGB satellite image patch (3-band optical, derived from
-  Sentinel-2 imagery).
-- **Output:** one of 10 land-use/land-cover class labels.
+  Sentinel-2 imagery), covering roughly 640m x 640m on the ground at 10m
+  spatial resolution.
+- **Output:** one of 10 land-use/land-cover class labels, plus the predicted
+  probability across all ten.
 - **Task type:** supervised multi-class (single-label) image classification.
 
 ## Dataset: EuroSAT
@@ -45,14 +48,18 @@ after natural disasters.
   | Pasture | 2,000 |
   | **Total** | **27,000** |
 
-  See `figures/class_distribution.png` and `figures/sample_grid.png`
-  (one real image per class).
-- Images are 64x64 px, RGB, JPEG (verified on every file we inspected).
+- Images are 64x64 px, RGB, JPEG. We verified this file-by-file across all
+  27,000 images (`scripts/sample_inspection.py`): zero corrupted files, zero
+  images of a non-standard shape. We also computed per-class mean RGB
+  intensity and flagged each class's brightest 2% of images as likely
+  haze/cloud outliers rather than discarding them outright (see
+  `data/class_intensity_stats.csv`).
 - **License:** the EuroSAT labels/repo are released under the MIT license;
   the underlying Sentinel-2 imagery is free, full and open under the EU
-  Copernicus data policy. Free to use for academic coursework.
-- The dataset ships as a single unsplit pool — see "Split" below for how we
-  divide it.
+  Copernicus data policy. Confirmed against both the GitHub repository and
+  the Zenodo download page. Free to use for academic coursework.
+- The dataset ships as a single unsplit pool — see "Train / validation /
+  test split" below for how we divide it.
 
 ## Setup
 
@@ -73,27 +80,35 @@ python scripts/download_data.py
 #    check image dimensions, write data/class_counts.csv
 python scripts/inspect_data.py
 
-# 3. Generate the two required proposal figures into figures/
+# 3. Full-dataset integrity + intensity pass: verify every one of the
+#    27,000 images (shape, corruption), compute per-class mean RGB
+#    intensity and brightness outliers -> data/class_intensity_stats.csv
+python scripts/sample_inspection.py
+
+# 4. Generate the required proposal figures into figures/
 python scripts/make_plots.py
 
-# 4. Create the fixed, stratified 70/15/15 train/val/test split
+# 5. Create the fixed, stratified 70/15/15 train/val/test split
 #    (data/splits/{train,val,test}.csv) used for all model training
 #    this semester. Also prints and saves a per-class train/val/test
-#    breakdown table, verifying the stratification held exactly.
+#    breakdown, verifying the stratification held exactly.
 python scripts/split_dataset.py
 ```
 
-Every script prints a clean, aligned console table (via `tabulate`) and
-also saves a themed PNG of that table under `figures/`, so the pipeline's
-output is presentation-ready, not just terminal text:
+Each script prints a clean, aligned console table (via `tabulate`) in
+addition to writing its CSV output, so the pipeline's terminal output is
+presentation-ready, not just raw prints. `figures/docx_sample_grid.png` and
+`figures/docx_counts_intensity.png` (the two figures embedded in the
+submitted proposal) are committed directly; other generated plots/tables
+are build artifacts you can reproduce locally with the commands above and
+are not tracked in git.
 
 | Output | Produced by | Description |
 |---|---|---|
-| `figures/sample_grid.png` | `make_plots.py` | One real image per class |
-| `figures/class_distribution.png` | `make_plots.py` | Class frequency bar chart |
-| `figures/class_counts_table.png` | `inspect_data.py` | Rendered per-class count table |
-| `figures/split_summary_table.png` | `split_dataset.py` | Rendered train/val/test breakdown per class |
+| `figures/docx_sample_grid.png` | `make_plots.py` | One real image per class (committed) |
+| `figures/docx_counts_intensity.png` | `make_plots.py` | Class counts + per-class mean RGB intensity (committed) |
 | `data/class_counts.csv` | `inspect_data.py` | Raw per-class counts |
+| `data/class_intensity_stats.csv` | `sample_inspection.py` | Per-class mean RGB intensity + brightness-outlier counts |
 | `data/split_summary.csv` | `split_dataset.py` | Raw train/val/test breakdown per class |
 
 ## Train / validation / test split
@@ -102,14 +117,16 @@ EuroSAT does not ship an official split, so we define one **before any
 model training**, stratified by class so all three sets keep the same
 ~2,000-3,000-per-class proportions as the full dataset:
 
-| Split | Fraction | Purpose |
-|---|---|---|
-| Train | 70% | Fit model weights |
-| Validation | 15% | Model selection, hyperparameter tuning, early stopping |
-| Test | 15% | Final, untouched evaluation at the end of the semester |
+| Split | Fraction | # Images | Purpose |
+|---|---|---|---|
+| Train | 70% | 18,900 | Fit model weights |
+| Validation | 15% | 4,050 | Model selection, hyperparameter tuning, early stopping |
+| Test | 15% | 4,050 | Final, untouched evaluation at the end of the semester |
 
-Split is stratified per class with a fixed random seed (`42`) for
-reproducibility (`scripts/split_dataset.py`).
+The split is stratified per class with a fixed random seed (`42`) for
+reproducibility (`scripts/split_dataset.py`), and the exact per-class
+breakdown (confirming every class keeps the 70/15/15 proportion) is in
+`data/split_summary.csv` and reproduced as Table 3 of the proposal.
 
 ## Validation metric
 
@@ -139,16 +156,21 @@ selection and early stopping.
 ```
 .
 ├── data/
-│   ├── raw/              # not committed (see .gitignore) — created locally by download_data.py
-│   ├── class_counts.csv        # committed — real per-class counts
-│   ├── split_summary.csv       # committed — per-class train/val/test breakdown
+│   ├── raw/                      # not committed (see .gitignore) — created locally by download_data.py
+│   ├── class_counts.csv          # committed — real per-class counts
+│   ├── class_intensity_stats.csv # committed — per-class mean RGB intensity + outliers
+│   ├── split_summary.csv         # committed — per-class train/val/test breakdown
 │   └── splits/{train,val,test}.csv  # committed — the fixed stratified split
-├── figures/              # sample_grid.png, class_distribution.png,
-│                          # class_counts_table.png, split_summary_table.png (all generated)
-├── proposal/             # proposal PDF + source
+├── figures/
+│   ├── docx_sample_grid.png        # committed — Figure 1 in the proposal
+│   └── docx_counts_intensity.png   # committed — Figure 2 in the proposal
+├── proposal/
+│   ├── EuroSAT_Proposal.docx     # submitted proposal (3 pages)
+│   └── EuroSAT_LULC_Proposal.pdf # themed PDF version of the proposal
 ├── scripts/
 │   ├── download_data.py
 │   ├── inspect_data.py
+│   ├── sample_inspection.py
 │   ├── make_plots.py
 │   └── split_dataset.py
 ├── requirements.txt
@@ -157,11 +179,27 @@ selection and early stopping.
 
 ## Team
 
-- Abdelrahman Osman
-- Mohammed Alroomi
+- Mohammed Alroomi (202250760)
+- Abdelrahman Osman (202253120)
 
 ## Proposal
 
-See `proposal/EuroSAT_LULC_Proposal.pdf` for the 2-3 page project proposal
-(problem statement, dataset description, split plan, validation metric,
-required figures).
+`proposal/EuroSAT_Proposal.docx` is the submitted Milestone 1 proposal
+(3 pages: title and team, problem definition, dataset description with
+verified counts and sample inspection, both required figures, the
+train/validation/test split with a per-class breakdown, and the validation
+metric). `proposal/EuroSAT_LULC_Proposal.pdf` is an alternate, visually
+themed version of the same content.
+
+## Requirements checklist
+
+| Requirement | Where it's satisfied |
+|---|---|
+| Define a real problem | Proposal §1, README "Problem" |
+| Pick a real dataset and inspect it | Proposal §2; `scripts/inspect_data.py` + `scripts/sample_inspection.py` verify all 27,000 images |
+| Define train/val/test splits before training | Proposal §3; `scripts/split_dataset.py`, stratified 70/15/15, seed 42, fixed before any model is trained |
+| Pick a single validation metric | Proposal §4 — macro-averaged F1 |
+| Sample visualization plot | Proposal Figure 1 (`figures/docx_sample_grid.png`) |
+| Distribution plot | Proposal Figure 2 (`figures/docx_counts_intensity.png`) |
+| 2-3 page proposal with title, team, and all requirements | `proposal/EuroSAT_Proposal.docx` — exactly 3 pages |
+| GitHub repo with supporting code and README | This repository |
