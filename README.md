@@ -1,5 +1,7 @@
 # Land Use and Land Cover Classification from Satellite Imagery (EuroSAT)
 
+Repository: https://github.com/MohammedAbdullahA/eurosat-landcover-classification
+
 Deep learning course project. This repository holds the code supporting the
 project proposal: dataset acquisition, inspection, the required figures, and
 the fixed train/validation/test split that model-training work will build on
@@ -76,9 +78,23 @@ python scripts/make_plots.py
 
 # 4. Create the fixed, stratified 70/15/15 train/val/test split
 #    (data/splits/{train,val,test}.csv) used for all model training
-#    this semester
+#    this semester. Also prints and saves a per-class train/val/test
+#    breakdown table, verifying the stratification held exactly.
 python scripts/split_dataset.py
 ```
+
+Every script prints a clean, aligned console table (via `tabulate`) and
+also saves a themed PNG of that table under `figures/`, so the pipeline's
+output is presentation-ready, not just terminal text:
+
+| Output | Produced by | Description |
+|---|---|---|
+| `figures/sample_grid.png` | `make_plots.py` | One real image per class |
+| `figures/class_distribution.png` | `make_plots.py` | Class frequency bar chart |
+| `figures/class_counts_table.png` | `inspect_data.py` | Rendered per-class count table |
+| `figures/split_summary_table.png` | `split_dataset.py` | Rendered train/val/test breakdown per class |
+| `data/class_counts.csv` | `inspect_data.py` | Raw per-class counts |
+| `data/split_summary.csv` | `split_dataset.py` | Raw train/val/test breakdown per class |
 
 ## Train / validation / test split
 
@@ -122,8 +138,13 @@ selection and early stopping.
 
 ```
 .
-├── data/                 # not committed (see .gitignore) — created locally by download_data.py
-├── figures/              # sample_grid.png, class_distribution.png (generated)
+├── data/
+│   ├── raw/              # not committed (see .gitignore) — created locally by download_data.py
+│   ├── class_counts.csv        # committed — real per-class counts
+│   ├── split_summary.csv       # committed — per-class train/val/test breakdown
+│   └── splits/{train,val,test}.csv  # committed — the fixed stratified split
+├── figures/              # sample_grid.png, class_distribution.png,
+│                          # class_counts_table.png, split_summary_table.png (all generated)
 ├── proposal/             # proposal PDF + source
 ├── scripts/
 │   ├── download_data.py
