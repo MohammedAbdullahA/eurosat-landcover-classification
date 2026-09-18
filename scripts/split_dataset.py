@@ -20,7 +20,7 @@ import random
 from collections import defaultdict
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
-RAW_DIR = os.path.join(DATA_DIR, "raw", "2750")
+RAW_DIR = os.path.join(DATA_DIR, "raw", "EuroSAT_RGB")
 SPLIT_DIR = os.path.join(DATA_DIR, "splits")
 
 TRAIN_FRAC = 0.70

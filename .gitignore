@@ -1,5 +1,6 @@
-# Data (downloaded separately, see README)
-data/
+# Raw dataset (downloaded separately, see README) - large, not committed
+data/raw/
+data/EuroSAT.zip
 *.zip
 
 # Python

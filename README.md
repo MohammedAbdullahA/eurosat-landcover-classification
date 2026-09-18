@@ -25,12 +25,27 @@ after natural disasters.
   Dataset and Deep Learning Benchmark for Land Use and Land Cover
   Classification.* IEEE JSTARS. [arXiv:1709.00029](https://arxiv.org/abs/1709.00029)
 - Official repo: https://github.com/phelber/eurosat
-- **27,000** labeled, geo-referenced images across **10 classes**
-  (AnnualCrop, Forest, HerbaceousVegetation, Highway, Industrial, Pasture,
-  PermanentCrop, Residential, River, SeaLake), **2,000-3,000 images per
-  class** (moderate class imbalance — see `figures/class_distribution.png`
-  for the exact counts from our own inspection).
-- Images are 64x64 px, RGB, JPEG.
+- **27,000** labeled, geo-referenced images across **10 classes**, with a
+  moderate class imbalance (verified by our own inspection,
+  `scripts/inspect_data.py` -> `data/class_counts.csv`):
+
+  | Class | # Images |
+  |---|---|
+  | AnnualCrop | 3,000 |
+  | Forest | 3,000 |
+  | HerbaceousVegetation | 3,000 |
+  | Residential | 3,000 |
+  | SeaLake | 3,000 |
+  | Highway | 2,500 |
+  | Industrial | 2,500 |
+  | PermanentCrop | 2,500 |
+  | River | 2,500 |
+  | Pasture | 2,000 |
+  | **Total** | **27,000** |
+
+  See `figures/class_distribution.png` and `figures/sample_grid.png`
+  (one real image per class).
+- Images are 64x64 px, RGB, JPEG (verified on every file we inspected).
 - **License:** the EuroSAT labels/repo are released under the MIT license;
   the underlying Sentinel-2 imagery is free, full and open under the EU
   Copernicus data policy. Free to use for academic coursework.
@@ -47,10 +62,10 @@ pip install -r requirements.txt
 ## Reproducing the dataset inspection and required figures
 
 ```bash
-# 1. Download + extract the official archive (~90 MB) into data/raw/
+# 1. Download + extract the official archive (~90-95 MB) into data/raw/
 python scripts/download_data.py
-# If your network blocks the host, download it yourself first:
-#   curl -L -o data/EuroSAT.zip https://madm.dfki.de/files/sentinel/EuroSAT.zip
+# If your network blocks the host, download it yourself first, e.g.:
+#   curl -L -o data/EuroSAT.zip "https://zenodo.org/records/7711810/files/EuroSAT_RGB.zip?download=1"
 
 # 2. Inspect the real files: verify class folders, count images/class,
 #    check image dimensions, write data/class_counts.csv

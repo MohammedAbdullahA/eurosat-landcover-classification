@@ -12,7 +12,7 @@ from collections import Counter
 from PIL import Image
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
-RAW_DIR = os.path.join(DATA_DIR, "raw", "2750")
+RAW_DIR = os.path.join(DATA_DIR, "raw", "EuroSAT_RGB")
 OUT_CSV = os.path.join(DATA_DIR, "class_counts.csv")
 
 
