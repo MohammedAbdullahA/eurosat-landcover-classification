@@ -1,0 +1,13 @@
+# Data (downloaded separately, see README)
+data/
+*.zip
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+venv/
+.venv/
+
+# OS
+.DS_Store
