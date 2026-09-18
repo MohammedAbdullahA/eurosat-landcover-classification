@@ -136,5 +136,11 @@ selection and early stopping.
 
 ## Team
 
-- Abdelrahman (arbody.arb@gmail.com)
-- (add teammates here)
+- Abdelrahman Osman
+- Mohammed Alroomi
+
+## Proposal
+
+See `proposal/EuroSAT_LULC_Proposal.pdf` for the 2-3 page project proposal
+(problem statement, dataset description, split plan, validation metric,
+required figures).
