@@ -164,9 +164,10 @@ selection and early stopping.
 ├── figures/
 │   ├── docx_sample_grid.png        # committed — Figure 1 in the proposal
 │   └── docx_counts_intensity.png   # committed — Figure 2 in the proposal
+├── notebooks/
+│   └── Milestone2_MLP_EuroSAT.ipynb  # Milestone 2: data pipeline + shallow/deep MLPs (executed)
 ├── proposal/
-│   ├── EuroSAT_Proposal.docx     # submitted proposal (3 pages)
-│   └── EuroSAT_LULC_Proposal.pdf # themed PDF version of the proposal
+│   └── EuroSAT_Proposal.docx     # submitted Milestone 1 proposal (3 pages)
 ├── scripts/
 │   ├── download_data.py
 │   ├── inspect_data.py
@@ -176,6 +177,33 @@ selection and early stopping.
 ├── requirements.txt
 └── README.md
 ```
+
+## Milestone 2: Data pipeline and MLP networks
+
+`notebooks/Milestone2_MLP_EuroSAT.ipynb` is fully executed, so every output is visible without
+re-running it. It contains:
+
+- **A reusable PyTorch data pipeline** (`build_data_pipeline`). It loads the images and shows one
+  per class, makes a stratified 80/20 train/test split, then a stratified 80/20 train/validation
+  split (17,280 / 4,320 / 5,400 images). It flattens each image and standardises each channel
+  using statistics from the training split only, encodes the labels, converts everything to
+  tensors and builds the `DataLoader`s.
+- **A flexible `MLP` class.** The shallow model has 2 hidden layers (512 → 256). The deep model
+  has 5 (512 → 256 → 256 → 128 → 64). Every hidden layer uses ReLU, BatchNorm and Dropout 0.3,
+  and the output is 10 logits with softmax.
+- **A 3 × 3 comparison** of loss functions (cross-entropy, label smoothing, focal) against
+  optimizers (SGD with momentum, RMSprop, Adam), followed by a 4-value learning-rate study and
+  a shallow-vs-deep test comparison with learning curves.
+
+| Result | Value |
+|---|---|
+| Best loss / optimizer / learning rate | Focal loss (γ = 2) / RMSprop / 1e-3 |
+| Regularization strength | L2 weight decay = 0 (selected from {0, 1e-4, 1e-3}); dropout 0.3 |
+| Shallow MLP — test accuracy / macro-F1 | 0.687 / 0.681 |
+| Deep MLP — test accuracy / macro-F1 | 0.669 / 0.662 |
+
+To re-run it: `pip install -r requirements.txt`, download the data (see above), then open the
+notebook from the `notebooks/` folder. A full run takes about 25 minutes on a 2-core CPU.
 
 ## Team
 
@@ -188,8 +216,7 @@ selection and early stopping.
 (3 pages: title and team, problem definition, dataset description with
 verified counts and sample inspection, both required figures, the
 train/validation/test split with a per-class breakdown, and the validation
-metric). `proposal/EuroSAT_LULC_Proposal.pdf` is an alternate, visually
-themed version of the same content.
+metric).
 
 ## Requirements checklist
 
